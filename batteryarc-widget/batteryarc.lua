@@ -47,21 +47,32 @@ watch("acpi", 30,
         if status == 'Charging' then
             mirrored_text_with_background.fg = beautiful.widget_green
             --mirrored_text_with_background.fg = beautiful.widget_black
+            --naughty.notify {
+                --text = stdout,
+                --title = "Battery status",
+                --timeout = 5,
+                --hover_timeout = 0.5,
+                --width = 400,
+            --}
         else
-            mirrored_text_with_background.bg = beautiful.widget_transparent
+          mirrored_text_with_background.bg = beautiful.widget_transparent
             mirrored_text_with_background.fg = beautiful.widget_main_color
         end
 
-        if charge < 10 then
-            batteryarc.colors = { beautiful.widget_red }
-            if status ~= 'Charging' then
-                show_battery_warning()
-            end
-        elseif charge > 10 and charge < 25 then
+        if charge <= 12 then
+            batteryarc.colors = { beautiful.border_marked }
+            mirrored_text_with_background.bg = beautiful.border_marked
+            mirrored_text_with_background.fg = beautiful.fg_normal
+            show_battery_warning()
+        elseif charge > 12 and charge < 25 then
             batteryarc.colors = { beautiful.widget_yellow }
+            mirrored_text_with_background.bg = beautiful.widget_yellow
+            mirrored_text_with_background.fg = beautiful.bg_normal
         elseif charge < 100 then
             if status == 'Charging' then
               batteryarc.colors = { beautiful.widget_green }
+            mirrored_text_with_background.bg = beautiful.bg_normal
+            mirrored_text_with_background.fg = beautiful.fg_normal
             else
               batteryarc.colors = { beautiful.widget_main_color }
             end
@@ -91,7 +102,6 @@ function show_battery_status()
                 title = "Battery status",
                 timeout = 5,
                 hover_timeout = 0.5,
-                width = 200,
             }
         end)
 end
@@ -111,16 +121,14 @@ batteryarc:connect_signal("mouse::leave", function() naughty.destroy(notificatio
 --[[ Show warning notification ]]
 function show_battery_warning()
     naughty.notify {
-        icon = HOME .. "/.config/awesome/nichosi.png",
-        icon_size = 100,
-        text = "Huston, we have a problem",
-        title = "Battery is dying",
+        preset = naughty.config.presets.critical,
+        icon = "/usr/share/icons/Arc/emblems/128/emblem-danger.png",
+        icon_size = 200,
+        text = "La batterie est bientôt épuisée !",
+        title = "ATTENTION !",
         timeout = 5,
         hover_timeout = 0.5,
         position = "bottom_right",
-        bg = "#F06060",
-        fg = "#EEE9EF",
-        width = 300,
     }
 end
 
